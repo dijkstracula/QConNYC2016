@@ -1,0 +1,165 @@
+[Introduction & Motivation: 5 minutes]
+
+-Who am I
+  - I’m Nathan, I work on highly concurrent C codebases and language runtimes; in grad school I worked on dynamic analysis tools to improve program performance
+
+-What is dynamic analysis
+  - To cite: The Concept of Dynamic Analysis
+  - Two implementation techniques: build "walled simulation" around system to observe (the SNES emulator model), or run natively and inject instrumentation into the system (the early hypervisor model)
+
+- Classic use cases: 
+  - input for developers understanding a new codebase
+  - debugging crashes & races "We must remind ourselves again that history as usually written (peccavimus) is quite different from history as usually lived: the historian records the exceptional because it is interesting-because it is exceptional."
+  - security analysis of obfuscated binaries or malware
+
+-Why should you care about this talk
+  - huge gulf between acadmic work on dynamic analysis tools and what we see in production
+  - many techniques shared with other areas you might find interesting, like virtualization and just-in-time compilers
+  - advanced techniques require hardware support, but hardware companies are watching out for what software people want...
+  - more powerful tools require greater performance sacrifices: knowing the lay of the land will help you better choose what techniques are right for your needs 
+
+-Static vs dynamic analysis
+  - why not Just Use Types? What must we do dynamically that we can't do statically?
+  - Static analysis: conservative approximation of runtime behaviour
+    - programs are only partially known (dynamic linking, user input), set of possibilities becomes huge
+    - it is imprecise: consider incorrect programs that a type checker would permit; pointer analysis, esp across shared objects / class files
+    - many language specs assume depend on single thread for defn of program correctness; race conditions can slip through the cracks here
+    - cite: On The LImits Of Infomation Flow, Dynamic Analysis from the Ground Up
+  - Dynamic analysis: can't prove correctness but can demonstrate failure
+
+- Talk plan
+  - Begin with a conventional debugger, and extend the ideas there successively for increasingly-powerful & difficult forms of analysis
+    - Memory tracking
+    - Online Record & Offline Replay
+    - Full-system analysis
+    - Multicore Considerations
+    - Hardware Support / Wishlist
+
+
+[Memory tracking: 20 minutes]
+
+- A gentle introduction: time travelling debugging
+  - Problem statement: What assigned this pointer value to 7? (cite The Night's Watch)
+
+- Time-travelling debugging: GDB7, some experimental Java runtimes
+  - Consider a null pointer dereference crash: What does a stack trace not get you?
+    - Functions that have returned
+    - Previous / overwritten program state
+  - Traditional debugging approach: from crash, set increasingly early breakpoints & restart to walk backwards in time - O(n^2)
+  - Idea: create a data structure that allows the debugger to reconstruct the program state at a given period of time
+  - GDB 7: the most straightforward way to build this
+    - Doubly-linked list of register & memory writes (./gdb/record-full.c)
+    - Single-step & instruction emulation.  Very slow!
+    - Not a criticism, serves to show that you don't need highly optimized algorithms to build a dynamic analysis tool
+    - Demo, maybe?
+  - Focus on usability rather than performance typical in the research literature.
+
+- How better to store trace information
+  - Having to replay all operations (see ReVirt) to get to a particular state is suboptimal
+  - Scalable Omniscient Debugging: B+ tree
+    - Optimized for high-speed offline recording rather than replaying - does this meet your usecase better?
+  - TTVM: checkpoint with redo/undo log
+    - contains CPU registers, memory state, virtualized disk
+    - Differences in checkpoints are stored via COW
+    - To reach a place, restore most recent checkpoint and walk forward (using redo log) or back (using undo log)
+    - Only stores non-deterministic events!  With the state stored at checkpoints, that's enough to replay the full execution
+  - We will have more to say about this in the SMP world
+
+- Speeding execution up with JITs: Pin/VX32 & Valgrind (type 1 vs type 2 hypervisor dichotomy?)
+  - Data driven rather than execution-driven: Use techniques from language runtimes to build more flexible analysis tools
+  - Don't store record of how the program mutates itself over time, but recompile itself to add arbitrary instrumentation
+    - JIT: Rather than compiling bytecode to native instructions, TRANSLATE native to native (with instrumentation)
+  - Most instructions (arithmetic, data moves, etc) are unchanged; we just have to make sure we don't escape the JIT
+    - Jumps have to go to code that we generated, not back to the original code segment
+      - Pin: clone the code segment as it executes, weaving extra instrumentation and jump rewrites in as you go
+      - Walk through example w/ indirect target chaining?
+    - Valgrind: "disassemble and resynthesize" - decompile to an IR, weave in IR-level instrumentation, reassemble
+      -  Walk through, I donno
+
+- Memory tracking in practice
+  - Problem statement: what values did a variable / piece of memory have over time? how does a value get copied through the system?
+  - All this sounds enticing because it can be applied to unmodified software, and we claim no false positives
+  - TaintBochs: observes "sensitive" data (like passwords)'s lifetimes in major applications: Perl, Mozilla, Apache
+    - Begin with sensitive data from "the outside world" (e.g. keyboard entry, network traffic), watch the taint spread through the system
+    - Any operation that uses "sensitive" data is itself tainted and considered sensitive too
+      - Copying data obviously taints it, but what about processor instruction with output that is a function of tainted input?
+      - "if any byte of any input value is tainted, then all bytes of the output are tainted.
+    - Problems with this approach:
+      - Lookup tables - output is a function of _control flow changes_ that depended on input
+      - entropy-seeking devices - eg. keyboard entry used to seed RNG, which can be used everywhere in the system
+      - Claimed to not be a problem in practice
+    - Walk through Mozilla example
+  - "Pointless Tainting" - a more cynical view.  No false positives but what about false negatives?
+    - Focused on the limitations of this idea - easy to circumvent if trying to analyze malware
+    - benign actions like configuring IP addresses causes explosion of tainted memory
+
+
+[Full-system instrumentation in practice: 5 minutes ]
+
+-Full-system instrumentation
+  - We started with a userspace debugger and ended with a full-system memory tracker; what is different between userspace and full-system?
+    - userspace tools sit in the space between the OS and the instrumented program by using features of the OS
+    - What's under the OS?  Either hardware emulators or a virtual machine monitor!
+      - We'll talk about hardware-specific extensions at the end
+    - Why is full-system instrumentation important?
+      - Use-cases like taint tracking require tracking how something propagates through the computer starting from hardware
+
+- Limitations of the above
+  - really requires an insertion shim like a language runtime or a VMM
+  - How far can we get for full-system dynamic analysis without virtualization?
+
+-Linux instrumentation with BCC, BPF, and probes
+  - BCC: framework for dynamic full-system instrumentation of Linux & applications
+  - BPF: an "in-kernel virtual machine" that compiles, validates, and executes bytecode
+    - bytecode defined in bpf_common.h
+    - bpf_jit_comp.c : dojit()
+  - Probe system: tldr allows callbacks to be invoked when a piece of memory is accessed
+TODO
+  - Limitations: you don't have that shim btw hardware and the OS to interpose on full-system memory access
+
+
+[Multicore considerations: 10 minutes]
+
+- Limitations of the above
+  - We assume a single thread of operation, or a single processor system!
+
+-SMP Record & Replay
+  - in a multiprocessor environment, a non-deterministic event that we have to record is outcomes of memory races
+  - What's hard about concurrency
+    - News flash: your computer is a distributed system
+  - Can build SMP record/replay systems by serializing threads or tracking synchronization (e.g. "who gets the lock" or
+"who gets scheduled to run")
+    - Show Valgrind tool that does this
+    - But, this means data races, usually the problems we want to look for, are lost and remain ambiguous!
+  - Flight Data Recorder, SMP-ReVirt: assumes a sequentially consistent memory system
+    - SMP-ReVirt ordering requirement (happens-before)
+    - "if every node sees memory writes in the same order" - MESI cache coherence protocol gives us this
+- Race detection
+
+- relaxed determinism
+
+- TODO: Chronomancer?
+
+
+[hardware and future work: 5 minutes]
+
+-Hardware support & The Future
+  - the current state: trap & emulate, ugh
+  - Hardware watchpoints
+  - Itanium's ALAT table?
+  - x86 Intel Processor Trace (PT)
+  - LBR for call stacks & branch recording
+  - TODO: think about hardware read/write barriers?
+
+-Conclusion
+
+SLIDE AESTHETIC IDEAS:
+  - sherlock holmes
+  - where in time is carmen sandiego
+
+TO READ/CITE:
+  - T. Ball. The concept of dynamic analysis In ESEC / SIGSOFT FSE, pages 216–234, 1999
+  - Go's race detector
+  - Dho's Raikonnen
+  - How dtrace / perftools fits into the research space
+  - BTIO
