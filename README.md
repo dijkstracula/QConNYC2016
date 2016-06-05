@@ -21,6 +21,7 @@
 ### Time-Travel Debugging, Record & Replay, and Taint Analysis
 
 * [Design and Implementation of a Backwards-In-Time Debugger](http://www.marcusdenker.de/publications/Hofe06aUnstuckNode.pdf)
+* [Debugging Through Time with the Tralfamadore Debugger](http://www.dcs.gla.ac.uk/conferences/resolve12/papers/session4_paper1.pdf)
 * [Scalable Omniscient Debugging](pleiad.dcc.uchile.cl/papers/2007/pothierAl-oopsla2007.pdf)
 
 * [ReVirt: Enabling Intrusion Analysis through Virtual-Machine Logging and Replay](https://cse.umich.edu/cse/awards/pdfs/ReVirt.pdf)
