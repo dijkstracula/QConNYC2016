@@ -6,6 +6,14 @@
 * Slides (forthcoming)
 * Video (forthcoming)
 
+## Dynamic Analysis Tools / Source Code
+
+* [GDB Reverse Debugging](https://www.gnu.org/software/gdb/news/reversible.html)
+* [Pin](https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool)
+* [Valgrind](http://valgrind.org)
+* [ReVirt](http://web.eecs.umich.edu/virtual/software.html)
+* [ThreadSanitizer](http://clang.llvm.org/docs/ThreadSanitizer.html)
+
 ## Supplimental Papers
 
 ### Dynamic Analysis and Tools
@@ -30,13 +38,17 @@
 * [Understanding Data Lifetime via Whole System Simulation](http://benpfaff.org/papers/taint.pdf)
 * [Pointless Tainting? Evaluating the Practicality of Pointer Tainting](http://ssrg.nicta.com.au/publications/papers/Slowinska_Bos_09.pdf)
 
-### Multiprocessor Deterministic Replay
+### Multiprocessor Replay and Race Detection
 
 * [A "Flight Data Recorder" for Enabling Full-System Multiprocessor Deterministic Replay](https://minds.wisconsin.edu/handle/1793/8664)
 * [Execution Replay for Multiprocessor Virtual Machines](http://web.eecs.umich.edu/virtual/papers/dunlap08.pdf)
 * [PRES: Probabilistic Replay with Execution Sketching on Multiprocessors](www.cs.columbia.edu/~junfeng/12fa-e6121/papers/pres.pdf)
 * [ODR: Output-Deterministic Replay for Multicore Debugging](www.sigops.org/sosp/sosp09/papers/altekar-sosp09.pdf)
 * [Hardware-Assisted Replay of Multiprocessor Programs](http://www.cs.cmu.edu/~seth/papers/bacon-wpdd91.pdf)
+
+* [Eraser: A Dynamic Data Race Detector for Multithreaded Programs](http://homes.cs.washington.edu/~tom/pubs/eraser.pdf)
+* [Hybrid Dynamic Data Race Detection](http://www.cs.columbia.edu/~junfeng/10fa-e6998/papers/hybrid.pdf)
+* [ThreadSanitizer – data race detection in practice](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/35604.pdf)
 
 ## Special thanks
 

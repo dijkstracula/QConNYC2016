@@ -1,4 +1,4 @@
-[Introduction & Motivation: 5 minutes]
+[Introduction & Motivation: 3 minutes]
 
 -Who am I
   - I’m Nathan, I work on highly concurrent C codebases and language runtimes; in grad school I worked on dynamic analysis tools to improve program performance
@@ -41,7 +41,7 @@
 - A gentle introduction: time travelling debugging
   - Problem statement: What assigned this pointer value to 7? (cite The Night's Watch)
 
-- Time-travelling debugging: GDB7, some experimental Java runtimes
+- Time-travelling debugging: GDB7, some experimental Java runtimes [5 minutes]
   - Consider a null pointer dereference crash: What does a stack trace not get you?
     - Functions that have returned
     - Previous / overwritten program state
@@ -54,7 +54,7 @@
     - Demo, maybe?
   - Focus on usability rather than performance typical in the research literature.
 
-- How better to store trace information
+- How better to store trace information [2.5 minutes]
   - Having to replay all operations (see ReVirt) to get to a particular state is suboptimal
   - Scalable Omniscient Debugging: B+ tree
     - Optimized for high-speed offline recording rather than replaying - does this meet your usecase better?
@@ -65,7 +65,7 @@
     - Only stores non-deterministic events!  With the state stored at checkpoints, that's enough to replay the full execution
   - We will have more to say about this in the SMP world
 
-- Speeding execution up with JITs: Pin/VX32 & Valgrind (type 1 vs type 2 hypervisor dichotomy?)
+- Speeding execution up with JITs [5 minutes]
   - Data driven rather than execution-driven: Use techniques from language runtimes to build more flexible analysis tools
   - Don't store record of how the program mutates itself over time, but recompile itself to add arbitrary instrumentation
     - JIT: Rather than compiling bytecode to native instructions, TRANSLATE native to native (with instrumentation)
@@ -74,9 +74,9 @@
       - Pin: clone the code segment as it executes, weaving extra instrumentation and jump rewrites in as you go
       - Walk through example w/ indirect target chaining?
     - Valgrind: "disassemble and resynthesize" - decompile to an IR, weave in IR-level instrumentation, reassemble
-      -  Walk through, I donno
+      -  Have to mention Shadow Memory for AddressSanitizer, probably SMT-ReVirt too
 
-- Memory tracking in practice
+- Memory tracking in practice [7.5 minutes]
   - Problem statement: what values did a variable / piece of memory have over time? how does a value get copied through the system?
   - All this sounds enticing because it can be applied to unmodified software, and we claim no false positives
   - TaintBochs: observes "sensitive" data (like passwords)'s lifetimes in major applications: Perl, Mozilla, Apache
@@ -94,57 +94,57 @@
     - benign actions like configuring IP addresses causes explosion of tainted memory
 
 
-[Full-system instrumentation in practice: 5 minutes ]
+[Multicore considerations: 20 minutes]
 
--Full-system instrumentation
-  - We started with a userspace debugger and ended with a full-system memory tracker; what is different between userspace and full-system?
-    - userspace tools sit in the space between the OS and the instrumented program by using features of the OS
-    - What's under the OS?  Either hardware emulators or a virtual machine monitor!
-      - We'll talk about hardware-specific extensions at the end
-    - Why is full-system instrumentation important?
-      - Use-cases like taint tracking require tracking how something propagates through the computer starting from hardware
-
-- Limitations of the above
-  - really requires an insertion shim like a language runtime or a VMM
-  - How far can we get for full-system dynamic analysis without virtualization?
-
--Linux instrumentation with BCC, BPF, and probes
-  - BCC: framework for dynamic full-system instrumentation of Linux & applications
-  - BPF: an "in-kernel virtual machine" that compiles, validates, and executes bytecode
-    - bytecode defined in bpf_common.h
-    - bpf_jit_comp.c : dojit()
-  - Probe system: tldr allows callbacks to be invoked when a piece of memory is accessed
-TODO
-  - Limitations: you don't have that shim btw hardware and the OS to interpose on full-system memory access
-
-
-[Multicore considerations: 10 minutes]
-
-- Limitations of the above
+- Limitations of the above [ 2 minutes]
   - We assume a single thread of operation, or a single processor system!
-
--SMP Record & Replay
+    - Either we haven't explicitly mentioned SMP or we assume single thread of execution
   - in a multiprocessor environment, a non-deterministic event that we have to record is outcomes of memory races
+
+-SMP Record & Replay [5 minutes]
   - What's hard about concurrency
     - News flash: your computer is a distributed system
+    - In a single-threaded context, non-deterministic events are still synchronous; now we consider non-determinism in timing
   - Can build SMP record/replay systems by serializing threads or tracking synchronization (e.g. "who gets the lock" or
 "who gets scheduled to run")
     - Show Valgrind tool that does this
     - But, this means data races, usually the problems we want to look for, are lost and remain ambiguous!
-  - Flight Data Recorder, SMP-ReVirt: assumes a sequentially consistent memory system
-    - SMP-ReVirt ordering requirement (happens-before)
-    - "if every node sees memory writes in the same order" - MESI cache coherence protocol gives us this
-- Race detection
+  - Literature mostly assumes a sequentially consistent memory system
+    - Happens-Before (Lamport: Time, Clocks, and Ordering of Events in a Distributed System)
+      - happens-before relation can therefore be computed using vector clocks
+    - CREW protocol: everyone has read permission, nobody has write permission, OR, one has RW, no one else has anything
+      - SMP-ReVirt: "two processors accessing the same page w/ one being a write, a CREW event is emitted to adjust permissions"
+      - Implemented by hardware page protection. How do we we do this without confusing the underlying system? Hypervisor + shadow page tables
+      - This doesn't work for DMA, which is totally under the control of the hardware.  Future work might require custom hardware...
+    - Generally-speaking, Happens-Before generates no false positives but hard to implement efficiently
 
-- relaxed determinism
+- Race detection [10 minutes?]
+  - Different but very practical problem: don't need to record entire execution but only observe a failure of locking dicipline
+  - Examples: https://github.com/google/sanitizers/wiki/ThreadSanitizerPopularDataRaces
+  - Implementation: implement all read and writes, and all calls to lock() and unlock(), across all threads
+      - You have techniques to do this now!
+  - Eraser: Uses lockset rather than Happens-Before property
+    - Show example that H-B would miss
+    - Show iterative refinement algorithm: if the set of locks that protect a variable becomes empty, we've found a potential datarace
+      - Potential because the two threads may not have interfered with each other
+    - "Performance was not a goal" : 10x - 30x slowdown
+    - Valgrind-style shadow memory used to store locksets for each shared variable.
+  - ThreadSanitizer: a hybrid of happens-before and lockset; used by (among other things) Chromium and Golang
+    - Weaves instrumenting at compile-time, just as a JIT would do (but originally implemented in Valgrind)
+      - Compile time http://llvm.org/viewvc/llvm-project/llvm/trunk/lib/Transforms/Instrumentation/ThreadSanitizer.cpp?view=markup
+      - Runtime https://github.com/llvm-mirror/compiler-rt/blob/310285e9d8cf5a817d0788ec9ba509009bf748bd/lib/tsan/rtl/tsan_rtl.cc#L745
+        - pseudocode? https://github.com/google/sanitizers/wiki/ThreadSanitizerAlgorithm
+    - Lockset appraoch doesn't entirely work for golang because syncrhonization happens by passing objects between threads via channels
+      - CSP cited in particular http://www.cs.columbia.edu/~junfeng/10fa-e6998/papers/hybrid.pdf
 
-- TODO: Chronomancer?
+- relaxed determinism [3 minutes]
 
 
-[hardware and future work: 5 minutes]
+
+[hardware and future work: 3 minutes]
 
 -Hardware support & The Future
-  - the current state: trap & emulate, ugh
+  - the current state: page protection, trap & emulate, ugh
   - Hardware watchpoints
   - Itanium's ALAT table?
   - x86 Intel Processor Trace (PT)
@@ -152,6 +152,7 @@ TODO
   - TODO: think about hardware read/write barriers?
 
 -Conclusion
+
 
 SLIDE AESTHETIC IDEAS:
   - sherlock holmes
@@ -163,3 +164,32 @@ TO READ/CITE:
   - Dho's Raikonnen
   - How dtrace / perftools fits into the research space
   - BTIO
+
+
+
+
+Extra stuff
+
+[Full-system instrumentation in practice: 5 minutes ]
+
+-Full-system instrumentation
+  - We started with a userspace debugger and ended with a full-system memory tracker; what is different between userspace and full-system?
+    - userspace tools sit in the space between the OS and the instrumented program by using features of the OS
+    - What's under the OS?  Either hardware emulators or a virtual machine monitor!
+      - We'll talk about hardware-specific extensions at the end
+    - Why is full-system instrumentation important?
+      - Use-cases like taint tracking require tracking how something propagates through the computer starting from hardware
+
+- Limitations of the above
+  - really requires an insertion shim like a language runtime or a VMM, unless you're able to modify the compiler
+  - How far can we get for full-system dynamic analysis without virtualization?
+
+-Linux instrumentation with BCC, BPF, and probes
+  - BCC: framework for dynamic full-system instrumentation of Linux & applications
+  - BPF: an "in-kernel virtual machine" that compiles, validates, and executes bytecode
+    - bytecode defined in bpf_common.h
+    - bpf_jit_comp.c : dojit()
+  - Probe system: tldr allows callbacks to be invoked when a piece of memory is accessed
+TODO
+  - Limitations: you don't have that shim btw hardware and the OS to interpose on full-system memory access
+
