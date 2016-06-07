@@ -50,6 +50,14 @@
 * [Hybrid Dynamic Data Race Detection](http://www.cs.columbia.edu/~junfeng/10fa-e6998/papers/hybrid.pdf)
 * [ThreadSanitizer – data race detection in practice](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/35604.pdf)
 
+## Photo Credits
+
+* ["Sherlock" (CC BY-NC 2.0)](https://www.flickr.com/photos/zufallsfaktor/12352262723/)
+
+## Licences
+
+* [CC BY-NC 2.0](https://creativecommons.org/licenses/by-nc/2.0/)
+
 ## Special thanks
 
 * Mihir Nanavati
