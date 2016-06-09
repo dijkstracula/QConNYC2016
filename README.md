@@ -40,6 +40,7 @@
 
 ### Multiprocessor Replay and Race Detection
 
+* [Time, Clocks, and the Ordering of Events in a Distributed System](http://research.microsoft.com/en-us/um/people/lamport/pubs/time-clocks.pdf)
 * [A "Flight Data Recorder" for Enabling Full-System Multiprocessor Deterministic Replay](https://minds.wisconsin.edu/handle/1793/8664)
 * [Execution Replay for Multiprocessor Virtual Machines](http://web.eecs.umich.edu/virtual/papers/dunlap08.pdf)
 * [PRES: Probabilistic Replay with Execution Sketching on Multiprocessors](http://www.cs.columbia.edu/~junfeng/12fa-e6121/papers/pres.pdf)
