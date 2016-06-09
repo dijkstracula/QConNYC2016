@@ -50,6 +50,7 @@
 * [Eraser: A Dynamic Data Race Detector for Multithreaded Programs](http://homes.cs.washington.edu/~tom/pubs/eraser.pdf)
 * [Hybrid Dynamic Data Race Detection](http://www.cs.columbia.edu/~junfeng/10fa-e6998/papers/hybrid.pdf)
 * [ThreadSanitizer – data race detection in practice](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/35604.pdf)
+* [FastTrack: Efficient and Precise Dynamic Race Detection](https://users.soe.ucsc.edu/~cormac/papers/pldi09.pdf)
 
 ## Photo Credits
 
