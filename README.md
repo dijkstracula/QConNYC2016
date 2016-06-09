@@ -30,12 +30,12 @@
 
 * [Design and Implementation of a Backwards-In-Time Debugger](http://www.marcusdenker.de/publications/Hofe06aUnstuckNode.pdf)
 * [Debugging Through Time with the Tralfamadore Debugger](http://www.dcs.gla.ac.uk/conferences/resolve12/papers/session4_paper1.pdf)
-* [Scalable Omniscient Debugging](pleiad.dcc.uchile.cl/papers/2007/pothierAl-oopsla2007.pdf)
+* [Scalable Omniscient Debugging](http://pleiad.dcc.uchile.cl/papers/2007/pothierAl-oopsla2007.pdf)
 
 * [ReVirt: Enabling Intrusion Analysis through Virtual-Machine Logging and Replay](https://cse.umich.edu/cse/awards/pdfs/ReVirt.pdf)
 * [Debugging Operating Systems with Time-Traveling Virtual Machines](https://www.usenix.org/legacy/event/usenix05/tech/general/king/king.pdf)
 
-* [Understanding Data Lifetime via Whole System Simulation](http://benpfaff.org/papers/taint.pdf)
+* [Understanding Data Lifetime via Whole System Simulations](http://benpfaff.org/papers/taint.pdf)
 * [Pointless Tainting? Evaluating the Practicality of Pointer Tainting](http://ssrg.nicta.com.au/publications/papers/Slowinska_Bos_09.pdf)
 
 ### Multiprocessor Replay and Race Detection
