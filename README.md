@@ -42,7 +42,7 @@
 
 * [A "Flight Data Recorder" for Enabling Full-System Multiprocessor Deterministic Replay](https://minds.wisconsin.edu/handle/1793/8664)
 * [Execution Replay for Multiprocessor Virtual Machines](http://web.eecs.umich.edu/virtual/papers/dunlap08.pdf)
-* [PRES: Probabilistic Replay with Execution Sketching on Multiprocessors](www.cs.columbia.edu/~junfeng/12fa-e6121/papers/pres.pdf)
+* [PRES: Probabilistic Replay with Execution Sketching on Multiprocessors](http://www.cs.columbia.edu/~junfeng/12fa-e6121/papers/pres.pdf)
 * [ODR: Output-Deterministic Replay for Multicore Debugging](www.sigops.org/sosp/sosp09/papers/altekar-sosp09.pdf)
 * [Hardware-Assisted Replay of Multiprocessor Programs](http://www.cs.cmu.edu/~seth/papers/bacon-wpdd91.pdf)
 
