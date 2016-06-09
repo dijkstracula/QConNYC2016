@@ -54,6 +54,7 @@
 ## Photo Credits
 
 * ["Sherlock" (CC BY-NC 2.0)](https://www.flickr.com/photos/zufallsfaktor/12352262723/)
+* [Cover, "Conan Doyle's best books, in three volumes. V.I."](https://archive.org/details/conandoylesbestb00doyl)
 
 ## Licences
 
