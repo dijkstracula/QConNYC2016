@@ -63,6 +63,7 @@
 
 ## Special thanks
 
+* [Elaine Greenberg](https://twitter.com/ejgreenberg)
 * [Devon O'Dell](https://twitter.com/dhobsd)
 * [Frederik Deweerdt](https://github.com/deweerdt)
 * [Jerry Kuch](https://twitter.com/jerrykuch)
