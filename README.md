@@ -63,6 +63,9 @@
 
 ## Special thanks
 
-* Mihir Nanavati
-* Ines Sombra
-* Andy Warfield
+* [Devon O'Dell](https://twitter.com/dhobsd)
+* [Frederik Deweerdt](https://github.com/deweerdt)
+* [Jerry Kuch](https://twitter.com/jerrykuch)
+* [Mihir Nanavati](http://www.cs.ubc.ca/~mihirn/)
+* [Ines Sombra](https://twitter.com/randommood)
+* [Andy Warfield](https://twitter.com/andywarfield)
