@@ -16,9 +16,10 @@
 
 ## Supplimental Papers
 
-### Dynamic Analysis and Tools
+### Overview, Dynamic Analysis, and Tools
 
 * [The Concept of Dynamic Analysis](http://research.microsoft.com/en-us/um/people/tball/papers/fse-concept.pdf)
+* [The Night's Watch](scholar.harvard.edu/files/mickens/files/thenightwatch.pdf)
 * [Framework for Instruction-level Tracing and Analysis of Program Executions](https://www.usenix.org/legacy/events/vee06/full_papers/p154-bhansali.pdf)
 
 * [Vx32: Lightweight, User-level Sandboxing on the x86](https://pdos.csail.mit.edu/papers/vx32:usenix08/)
