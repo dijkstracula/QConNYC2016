@@ -1,8 +1,10 @@
 # Beyond Breakpoints: A Tour Of Dynamic Analysis 
 
+## Abstract
+> Despite advances in software design and static analysis techniques, software remains incredibly complicated and difficult to reason about. Understanding highly-concurrent, kernel-level, and intentionally-obfuscated programs are among the problem domains that spawned the field of dynamic program analysis. More than mere debuggers, the challenge of dynamic analysis tools is to be able record, analyze, and replay execution without sacrificing performance. This talk will provide an introduction to the dynamic analysis research space and hopefully inspire you to consider integrating these techniques into your own internal tools.
+
 ## Presentation materials
 
-* [Abstract](https://qconnewyork.com/ny2016/presentation/dynamic-analysis-techniques-understanding-programs)
 * Slides (forthcoming)
 * Video (forthcoming)
 
