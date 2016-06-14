@@ -13,6 +13,7 @@
 * [Valgrind](http://valgrind.org)
 * [ReVirt](http://web.eecs.umich.edu/virtual/software.html)
 * [ThreadSanitizer](http://clang.llvm.org/docs/ThreadSanitizer.html)
+* [librip](https://github.com/fastly/librip)
 
 ## Supplimental Papers
 
