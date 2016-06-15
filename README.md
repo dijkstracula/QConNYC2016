@@ -5,7 +5,7 @@
 
 ## Presentation materials
 
-* Slides (forthcoming)
+* [Slides](https://github.com/dijkstracula/QConNYC2016/blob/master/presentation.pdf) | [Slides w/ speaker notes](https://github.com/dijkstracula/QConNYC2016/blob/master/pres_with_notes.pdf)
 * Video (forthcoming)
 
 ## Dynamic Analysis Tools / Source Code
